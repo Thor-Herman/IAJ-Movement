@@ -35,35 +35,60 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
             this.Target = new KinematicData();
 
             // Don't forget to initialize the variables, you can do it here or in the MainCharacterController
-            this.MaxLookAhead = 5.0f;
-            this.AvoidMargin = 1.0f;
+            this.MaxLookAhead = 7.0f;
+            this.AvoidMargin = 3.0f;
+            this.FanAngle = 0.75f;
+        }
+
+        private class CustomRay
+        {
+            public Ray ray { get; set; }
+            public float length { get; set; }
+            public Vector3 direction { get; set; }
+
+            public CustomRay(KinematicData Character, float FanAngle, float length, int i)
+            {
+                direction = MathHelper.Rotate2D(Character.velocity.normalized, FanAngle * i);
+                ray = new Ray(Character.Position, direction);
+                this.length = length;
+            }
         }
 
         public override MovementOutput GetMovement()
         {
-            RaycastHit hit;
+            RaycastHit hit = new RaycastHit();
             bool collision = false;
 
-            // Now, how does Unity deals with colisions? Each obstacle has a collider...
-            Vector3 direction = MathHelper.ConvertOrientationToVector(this.Character.Orientation);
+            CustomRay[] rays = GenerateCustomRays();
 
-            for (int i = -1; i < 2; i++)
+            foreach (CustomRay ray in rays)
             {
-                Ray ray = new Ray(this.Character.Position, this.Character.velocity);
-                // Debug.DrawRay(this.Character.Position, this.Character.velocity, Color.red);
-                collision = ObstacleCollider.Raycast(ray, out hit, MaxLookAhead);
-
+                collision = ObstacleCollider.Raycast(ray.ray, out hit, ray.length);
                 if (collision)
                 {
+                    Debug.Log(hit.point);
                     Debug.Break();
-                    //base.Target.Position = hit.point + hit.normal * AvoidMargin;
-                    // Debug.DrawRay(this.Character.Position, hit.point + hit.normal * AvoidMargin, Color.green);
-                    //ebug.DrawRay(hit.point, hit.point + hit.normal * AvoidMargin, Color.magenta);
+                    base.Target.Position = hit.point - hit.normal * AvoidMargin;
+
+                    Vector3 debugray = base.Target.Position - this.Character.Position;
+                    Debug.DrawRay(this.Character.Position, ray.direction * ray.length, Color.red);
+                    Debug.DrawRay(this.Character.Position, debugray, Color.green);
+                    Debug.DrawRay(hit.point, hit.normal * AvoidMargin, Color.magenta);
+
                     return base.GetMovement();
                 }
             }
 
             return new MovementOutput();
+        }
+
+        private CustomRay[] GenerateCustomRays()
+        {
+            CustomRay leftRay = new CustomRay(Character, FanAngle, 3.0f, -1);
+            CustomRay middleRay = new CustomRay(Character, FanAngle, MaxLookAhead, 0);
+            CustomRay rightRay = new CustomRay(Character, FanAngle, 3.0f, 1);
+            CustomRay[] rays = { middleRay, leftRay, rightRay };
+            return rays;
         }
     }
 }
