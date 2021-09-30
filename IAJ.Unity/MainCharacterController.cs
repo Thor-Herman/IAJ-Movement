@@ -53,9 +53,10 @@ public class MainCharacterController : MonoBehaviour
             //TODO: add your AvoidObstacle movement here
             var avoidObstacleMovement = new DynamicAvoidObstacle(obstacle)
             {
-                Character = this.character.KinematicData
+                Character = this.character.KinematicData,
+                MaxAcceleration = MAX_ACCELERATION,
             };
-           
+
             // Add it to the Blend and Priority Movement here
             priorityMovement.Movements.Add(avoidObstacleMovement);
             blendedMovement.Movements.Add(new MovementWithWeight(avoidObstacleMovement, 0.5f));
@@ -69,7 +70,7 @@ public class MainCharacterController : MonoBehaviour
                 var avoidCharacter = new DynamicAvoidCharacter(otherCharacter.KinematicData)
                 {
                     Character = this.character.KinematicData,
-                };            
+                };
             }
         }
 
