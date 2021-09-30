@@ -59,7 +59,7 @@ public class MainCharacterController : MonoBehaviour
 
             // Add it to the Blend and Priority Movement here
             priorityMovement.Movements.Add(avoidObstacleMovement);
-            blendedMovement.Movements.Add(new MovementWithWeight(avoidObstacleMovement, 0.5f));
+            blendedMovement.Movements.Add(new MovementWithWeight(avoidObstacleMovement, 0.7f));
         }
 
         foreach (var otherCharacter in characters)

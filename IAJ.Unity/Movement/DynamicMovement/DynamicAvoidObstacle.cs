@@ -5,6 +5,7 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
 {
     public class DynamicAvoidObstacle : DynamicSeek
     {
+        #region variables
         public override string Name
         {
             get { return "Avoid Obstacle"; }
@@ -28,6 +29,7 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
         public float AvoidMargin { get; set; }
 
         public float FanAngle { get; set; }
+        #endregion
 
         public DynamicAvoidObstacle(GameObject obstacle)
         {
@@ -35,8 +37,8 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
             this.Target = new KinematicData();
 
             // Don't forget to initialize the variables, you can do it here or in the MainCharacterController
-            this.MaxLookAhead = 7.0f;
-            this.AvoidMargin = 3.0f;
+            this.MaxLookAhead = 6.0f;
+            this.AvoidMargin = 5.0f;
             this.FanAngle = 0.75f;
         }
 
@@ -70,7 +72,6 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
                     // Debug.Break();
                     base.Target.Position = hit.point + hit.normal * AvoidMargin;
                     DrawDebugRays(ray, hit);
-
                     return base.GetMovement();
                 }
             }
@@ -80,19 +81,19 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
 
         private CustomRay[] GenerateCustomRays()
         {
-            // CustomRay leftRay = new CustomRay(Character, FanAngle, 3.0f, -1);
+            CustomRay leftRay = new CustomRay(Character, FanAngle, 3.0f, -1);
             CustomRay middleRay = new CustomRay(Character, FanAngle, MaxLookAhead, 0);
-            // CustomRay rightRay = new CustomRay(Character, FanAngle, 3.0f, 1);
-            CustomRay[] rays = { middleRay };
-            // CustomRay[] rays = { middleRay, leftRay, rightRay };
+            CustomRay rightRay = new CustomRay(Character, FanAngle, 3.0f, 1);
+            // CustomRay[] rays = { middleRay };
+            CustomRay[] rays = { middleRay, leftRay, rightRay };
             return rays;
         }
 
         void DrawDebugRays(CustomRay ray, RaycastHit hit)
         {
-            Vector3 debugray = base.Target.Position - this.Character.Position;
+            Vector3 debugray = base.Target.Position - this.Character.Position; // The vector used for seek 
             Debug.DrawRay(this.Character.Position, debugray, Color.green);
-            Debug.DrawRay(hit.point, hit.normal * this.AvoidMargin, Color.magenta);
+            Debug.DrawRay(hit.point, hit.normal * this.AvoidMargin, Color.magenta); // normal vector
         }
     }
 }
