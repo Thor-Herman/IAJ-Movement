@@ -64,16 +64,12 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
             foreach (CustomRay ray in rays)
             {
                 collision = ObstacleCollider.Raycast(ray.ray, out hit, ray.length);
+                Debug.DrawRay(this.Character.Position, ray.direction * ray.length, Color.red);
                 if (collision)
                 {
-                    Debug.Log(hit.point);
-                    Debug.Break();
-                    base.Target.Position = hit.point - hit.normal * AvoidMargin;
-
-                    Vector3 debugray = base.Target.Position - this.Character.Position;
-                    Debug.DrawRay(this.Character.Position, ray.direction * ray.length, Color.red);
-                    Debug.DrawRay(this.Character.Position, debugray, Color.green);
-                    Debug.DrawRay(hit.point, hit.normal * AvoidMargin, Color.magenta);
+                    // Debug.Break();
+                    base.Target.Position = hit.point + hit.normal * AvoidMargin;
+                    DrawDebugRays(ray, hit);
 
                     return base.GetMovement();
                 }
@@ -84,11 +80,19 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
 
         private CustomRay[] GenerateCustomRays()
         {
-            CustomRay leftRay = new CustomRay(Character, FanAngle, 3.0f, -1);
+            // CustomRay leftRay = new CustomRay(Character, FanAngle, 3.0f, -1);
             CustomRay middleRay = new CustomRay(Character, FanAngle, MaxLookAhead, 0);
-            CustomRay rightRay = new CustomRay(Character, FanAngle, 3.0f, 1);
-            CustomRay[] rays = { middleRay, leftRay, rightRay };
+            // CustomRay rightRay = new CustomRay(Character, FanAngle, 3.0f, 1);
+            CustomRay[] rays = { middleRay };
+            // CustomRay[] rays = { middleRay, leftRay, rightRay };
             return rays;
+        }
+
+        void DrawDebugRays(CustomRay ray, RaycastHit hit)
+        {
+            Vector3 debugray = base.Target.Position - this.Character.Position;
+            Debug.DrawRay(this.Character.Position, debugray, Color.green);
+            Debug.DrawRay(hit.point, hit.normal * this.AvoidMargin, Color.magenta);
         }
     }
 }
