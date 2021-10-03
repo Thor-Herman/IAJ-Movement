@@ -17,8 +17,8 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
         {
             this.Target = target;
             this.Output = new MovementOutput();
-            this.MaxTimeLookAhead = 2.0f;
-            this.AvoidMargin = 6.0f;
+            this.MaxTimeLookAhead = 2.5f;
+            this.AvoidMargin = 5.0f;
         }
 
         public override MovementOutput GetMovement()
@@ -36,7 +36,7 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
 
             if (timeToClosest > MaxTimeLookAhead) return new MovementOutput();
 
-            /* Less efficient version */
+            /* Less efficient version than pseudocode */
             Vector3 closestPointTarget = Target.Position + Target.velocity * timeToClosest;
             Vector3 closestPointCharacter = Character.Position + Character.velocity * timeToClosest;
             Vector3 avoidVelocity = closestPointCharacter - closestPointTarget;
