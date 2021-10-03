@@ -70,7 +70,10 @@ public class MainCharacterController : MonoBehaviour
                 var avoidCharacter = new DynamicAvoidCharacter(otherCharacter.KinematicData)
                 {
                     Character = this.character.KinematicData,
+                    MaxAcceleration = MAX_ACCELERATION,
                 };
+                priorityMovement.Movements.Add(avoidCharacter);
+                blendedMovement.Movements.Add(new MovementWithWeight(avoidCharacter, 0.5f));
             }
         }
 
